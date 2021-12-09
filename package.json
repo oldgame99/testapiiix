@@ -1,0 +1,20 @@
+{
+  "name": "kplaysearch",
+  "version": "1.0.0",
+  "description": "Free, in-app free and ad free G-Play search",
+  "main": "index.js",
+  "author": "KaKi87",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^3.4.1",
+    "fastify-static": "^3.2.0",
+    "google-play-scraper": "*"
+  },
+  "peerDependencies": {
+    "anonymous-analytics": "https://git.kaki87.net/KaKi87/anonymous-analytics.git",
+    "fastify-sentry": "^1.4.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

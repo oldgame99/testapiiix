@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>KPlaySearch | Advanced Google Play search</title>
+	<link rel="stylesheet" href="assets/css/main.css">
+	<link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+	<link rel="stylesheet" href="assets/css/uikit.min.css">
+	<link rel="icon" href="assets/favicon.png">
+	<script defer src="assets/js/index.js"></script>
+	<script defer src="assets/js/uikit.min.js"></script>
+	<script defer src="assets/js/uikit-icons.min.js"></script>
+</head>
+<body class="uk-light uk-background-secondary">
+	<p class="header" style="margin-bottom: 0">
+		<span class="header__title">Advanced Google Play search</span>
+		<span class="header__buttons">
+			<a class="resetSettings" href="#" >Reset</a>
+			|
+			<a href="#" data-uk-toggle="target: #about">About</a>
+            |
+            <a href="https://discord.gg/XZ8Ja8d" target="_blank"  data-uk-tooltip="title: On Discord">Get support</a>
+		</span>
+	</p>
+	<div class="search">
+		<p class="search__inputContainer">
+			<span class="uk-form-icon" data-uk-icon="icon: search"></span>
+			<input class="search__input uk-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="query" title="query">
+			<button class="search__submit uk-button uk-button-default uk-box-shadow-hover-small" type="submit">
+				<span class="search__submit__text">Search</span>
+				<span class="search__submit__spinner" data-uk-spinner="ratio: 0.75"></span>
+			</button>
+		</p>
+		<form class="search__settings uk-flex">
+			<div class="search__setting search__setting--set">
+				<label for="maxPrice">Max price</label>
+				<input class="uk-range" type="range" min="0" max="150" value="0" id="maxPrice">
+				<span class="maxPrice-text range-text">free</span>
+			</div>
+			<div class="search__setting search__setting--set">
+				<label for="adFree">Ad-free</label>
+				<input class="uk-checkbox" type="checkbox" value="" id="adFree" checked>
+			</div>
+			<div class="search__setting search__setting--set">
+				<label for="inAppFree" data-uk-tooltip="title: IAP = In-App Purchases; delay: 250">IAP-free</label>
+				<input class="uk-checkbox" type="checkbox" value="" id="inAppFree" checked>
+			</div>
+			<div class="search__setting">
+				<label for="category" data-uk-tooltip="title: Experimental; delay: 250">Category</label>
+				<select class="uk-select" id="category">
+					<option selected value="">-</option>
+				</select>
+			</div>
+			<div class="search__setting">
+				<label for="minInstalls">Min installs</label>
+				<input class="uk-range" type="range" min="0" max="6" value="0" id="minInstalls">
+				<span class="minInstalls-text range-text">-</span>
+			</div>
+			<div class="search__setting">
+				<label for="minScore">Min score</label>
+				<input class="uk-range" type="range" min="0" max="5" step="0.1" value="0" id="minScore">
+				<span class="minScore-text range-text">-</span>
+			</div>
+			<div class="search__setting">
+				<label for="maxSize">Max size</label>
+				<input class="uk-range" type="range" min="0" max="100" step="5" value="0" id="maxSize">
+				<span class="maxSize-text range-text">-</span>
+			</div>
+			<div class="search__setting">
+				<label for="maxUpdatedDays">Updated</label>
+				<select class="uk-select" id="maxUpdatedDays">
+					<option selected value="">-</option>
+					<option value="7">1 week</option>
+					<option value="14">2 weeks</option>
+					<option value="28">1 month</option>
+					<option value="84">3 months</option>
+				</select>
+				ago
+			</div>
+			<div class="search__setting">
+				<label for="minAndroidVersion">Android version</label>
+				<select class="uk-select" id="minAndroidVersion">
+					<option selected value="">-</option>
+				</select>
+			</div>
+		</form>
+	</div>
+	<div class="output">
+		<ul class="output__tabs" data-uk-tab="swiping: false" style="display: none;">
+			<li><a href="#">Apps</a></li>
+			<li><a href="#">Permissions</a></li>
+		</ul>
+		<ul class="output__tables uk-switcher uk-margin" style="display: none; margin: 0!important;">
+			<li class="output__tableContainer uk-overflow-auto">
+				<table class="output__table uk-table uk-table-hover uk-table-middle uk-table-divider">
+					<thead class="output__header">
+					<tr>
+						<th class="output__header__name">Name</th>
+						<th class="output__header__description">Description</th>
+						<th class="output__header__category" data-uk-tooltip="title: Category; delay: 250">Cat.</th>
+						<th class="output__header__installs">Installs</th>
+						<th class="output__header__score">Score</th>
+						<th class="output__header__size">Size</th>
+						<th class="output__header__version">Version</th>
+						<th class="output__header__last-update">Last<br>update</th>
+						<th class="output__header__price">Price</th>
+						<th class="output__header__ads">Ads</th>
+						<th class="output__header__IAP" data-uk-tooltip="title: IAP = In-App Purchases; delay: 250">IAP</th>
+						<th class="output__header__android-version">Android<br>version</th>
+						<th class="output__header__permissions" data-uk-tooltip="title: Permissions; delay: 250">Perms.</th>
+					</tr>
+					</thead>
+					<tbody class="output__data"></tbody>
+				</table>
+			</li>
+			<li class="output__tableContainer uk-overflow-auto">
+				<table class="output2__table uk-table uk-table-hover uk-table-middle uk-table-divider">
+					<thead class="output2__header"></thead>
+					<tbody class="output2__data"></tbody>
+				</table>
+			</li>
+		</ul>
+	</div>
+	<div id="about" data-uk-modal>
+		<div class="uk-modal-dialog uk-modal-body uk-light uk-background-secondary">
+			<button class="uk-modal-close-default" type="button" data-uk-close></button>
+			<h2 class="uk-modal-title">About</h2>
+			<p>
+				KPlaySearch <i>(KaKi's Google Play search engine)</i> allows you to perform advanced G-Play search, using
+				filters and sorting features.
+			</p>
+			<p>
+				It's free and open source, available on <a href="https://git.kaki87.net/KaKi87/KPlaySearch" target="_blank">my personal git</a>.
+			</p>
+		</div>
+	</div>
+	<div id="emptySearch" data-uk-modal>
+		<div class="uk-modal-dialog uk-modal-body uk-light uk-background-secondary">
+			<button class="uk-modal-close-default" type="button" data-uk-close></button>
+			<h2 class="uk-modal-title">Empty search query</h2>
+			<p>Searching with empty query is not possible because the Google Play Store itself does not allow it.</p>
+		</div>
+	</div>
+	<div>
+		<hr>
+		<p style="margin-bottom: 0">
+			<a href="https://gist.github.com/KaKi87/d64d7185a8ccb7823d89164c709a6851" target="_blank">Best of free, ad-free, in-app free apps</a>
+		</p>
+	</div>
+</body>
+</html>
