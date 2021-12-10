@@ -7,17 +7,17 @@ fetch('/categories').then(res => res.json()).then(res => res.forEach(c => docume
 
 // Android versions
 const androidVersions = [
-	'1.0', '1.1', '1.5', '1.6',
-	'2.0', '2.0.1', '2.1', '2.2', '2.2.1', '2.2.2', '2.2.3', '2.3', '2.3.1', '2.3.2', '2.3.3', '2.3.4', '2.3.5', '2.3.6', '2.3.7',
-	'3.0', '3.1', '3.2', '3.2.1', '3.2.2', '3.2.3', '3.2.4', '3.2.5', '3.2.6',
-	'4.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1', '4.1.1', '4.1.2', '4.2', '4.2.1', '4.2.2', '4.3', '4.3.1', '4.4', '4.4.1', '4.4.2', '4.4.3', '4.4.4',
-	'5.0', '5.0.1', '5.0.2', '5.1', '5.1.1',
-	'6.0', '6.0.1',
-	'7.0', '7.1', '7.1.1', '7.1.2',
-	'8.0', '8.1',
-	'9.0',
-	'10.0',
-	'11.0'
+    '1.0', '1.1', '1.5', '1.6',
+    '2.0', '2.0.1', '2.1', '2.2', '2.2.1', '2.2.2', '2.2.3', '2.3', '2.3.1', '2.3.2', '2.3.3', '2.3.4', '2.3.5', '2.3.6', '2.3.7',
+    '3.0', '3.1', '3.2', '3.2.1', '3.2.2', '3.2.3', '3.2.4', '3.2.5', '3.2.6',
+    '4.0', '4.0.1', '4.0.2', '4.0.3', '4.0.4', '4.1', '4.1.1', '4.1.2', '4.2', '4.2.1', '4.2.2', '4.3', '4.3.1', '4.4', '4.4.1', '4.4.2', '4.4.3', '4.4.4',
+    '5.0', '5.0.1', '5.0.2', '5.1', '5.1.1',
+    '6.0', '6.0.1',
+    '7.0', '7.1', '7.1.1', '7.1.2',
+    '8.0', '8.1',
+    '9.0',
+    '10.0',
+    '11.0'
 ];
 
 androidVersions.forEach(v => document.querySelector('#minAndroidVersion').innerHTML += `<option value="${v}">${v}</option>`);
@@ -29,54 +29,54 @@ androidVersions.forEach(v => document.querySelector('#minAndroidVersion').innerH
  */
 let lastQuery = '';
 const search = (query, callback) => {
-	if(query.name === lastQuery)
-		query.number = 120;
-	fetch('/search', {
-		method: 'post',
-		headers: { 'content-type': 'application/json' },
-		body: JSON.stringify(query)
-	}).then(res => res.json()).then(res => {
-		if(res.error) return callback();
-		if(res.length === 0 && query.number !== 120) return search({ ...query, number: 120 }, callback);
-		const r = [];
-		for(let i = 0; i < res.length; i++){
-			const _c = [];
-			for(let j = 0; j < query.conditions.length; j++){
-				_c.push(query.conditions[j](res[i]));
-			}
-			if(_c.every(c => c === true) || _c.length === 0){
-				r.push(res[i]);
-			}
-			for(let key in res[i]){
-				if(res[i].hasOwnProperty(key)){
-					if(['size', 'version', 'androidVersion'].indexOf(key) !== -1 && res[i][key].search(/var[iy]/i) !== -1){
-						res[i][key] = '-';
-					}
-					if(['offersIAP', 'adSupported'].indexOf(key) !== -1){
-						res[i][key] = res[i][key].toString().replace('true', 'yes').replace('false', 'no');
-					}
-				}
-			}
-		}
-		if(r.length === 0 && query.number !== 120) return search({ ...query, number: 120 }, callback);
-		lastQuery = query.name;
-		callback(r);
-	}).catch(() => callback());
+    if (query.name === lastQuery)
+        query.number = 120;
+    fetch('/search', {
+        method: 'post',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(query)
+    }).then(res => res.json()).then(res => {
+        if (res.error) return callback();
+        if (res.length === 0 && query.number !== 120) return search({...query, number: 120 }, callback);
+        const r = [];
+        for (let i = 0; i < res.length; i++) {
+            const _c = [];
+            for (let j = 0; j < query.conditions.length; j++) {
+                _c.push(query.conditions[j](res[i]));
+            }
+            if (_c.every(c => c === true) || _c.length === 0) {
+                r.push(res[i]);
+            }
+            for (let key in res[i]) {
+                if (res[i].hasOwnProperty(key)) {
+                    if (['size', 'version', 'androidVersion'].indexOf(key) !== -1 && res[i][key].search(/var[iy]/i) !== -1) {
+                        res[i][key] = '-';
+                    }
+                    if (['offersIAP', 'adSupported'].indexOf(key) !== -1) {
+                        res[i][key] = res[i][key].toString().replace('true', 'yes').replace('false', 'no');
+                    }
+                }
+            }
+        }
+        if (r.length === 0 && query.number !== 120) return search({...query, number: 120 }, callback);
+        lastQuery = query.name;
+        callback(r);
+    }).catch(() => callback());
 };
 
 /*
 Conditions checking functions
  */
 const _c = {
-	maxPrice: (app, n) => app.price <= n,
-	adFree: app => !app.adSupported,
-	inAppFree: app => !app.offersIAP,
-	category: (app, n) => app.genreId === n || app.genreId.split('_')[0] === n,
-	minInstalls: (app, n) => app.minInstalls >= n,
-	minScore: (app, n) => typeof app.score === 'number' && app.score.toFixed(1) >= n,
-	maxSize: (app, n) => parseFloat(app.size) <= n,
-	maxUpdatedDays: (app, n) => Math.floor((Date.now() - new Date(app.updated)) / 86400000) <= n,
-	minAndroidVersion : (app, n) => androidVersions.includes(app.androidVersion) && androidVersions.indexOf(app.androidVersion) <= androidVersions.indexOf(n)
+    maxPrice: (app, n) => app.price <= n,
+    adFree: app => !app.adSupported,
+    inAppFree: app => !app.offersIAP,
+    category: (app, n) => app.genreId === n || app.genreId.split('_')[0] === n,
+    minInstalls: (app, n) => app.minInstalls >= n,
+    minScore: (app, n) => typeof app.score === 'number' && app.score.toFixed(1) >= n,
+    maxSize: (app, n) => parseFloat(app.size) <= n,
+    maxUpdatedDays: (app, n) => Math.floor((Date.now() - new Date(app.updated)) / 86400000) <= n,
+    minAndroidVersion: (app, n) => androidVersions.includes(app.androidVersion) && androidVersions.indexOf(app.androidVersion) <= androidVersions.indexOf(n)
 };
 
 // Global search settings
@@ -86,21 +86,20 @@ const Query_Text = [...document.querySelectorAll('.search__settings span')].map(
 const Query_Set = [...document.querySelectorAll('.search__setting')].map(el => el.classList.contains('search__setting--set'));
 
 const resetSettings = () => {
-	// Reset search settings
-	Query_Conditions = [_c.adFree, _c.inAppFree];
-	Query_Price = 'free';
-	Query_Number = Math.floor(Query_Conditions.length * 12.5) || 25;
-	document.querySelector('.search__settings').reset();
-	// Reset default text display
-	document.querySelectorAll('.search__settings span').forEach((el, index) => el.textContent = Query_Text[index]);
-	document.querySelectorAll('.search__setting').forEach((el, index) => {
-		if(Query_Set[index]){
-			el.classList.add('search__setting--set');
-		}
-		else {
-			el.classList.remove('search__setting--set');
-		}
-	});
+    // Reset search settings
+    Query_Conditions = [_c.adFree, _c.inAppFree];
+    Query_Price = 'free';
+    Query_Number = Math.floor(Query_Conditions.length * 12.5) || 25;
+    document.querySelector('.search__settings').reset();
+    // Reset default text display
+    document.querySelectorAll('.search__settings span').forEach((el, index) => el.textContent = Query_Text[index]);
+    document.querySelectorAll('.search__setting').forEach((el, index) => {
+        if (Query_Set[index]) {
+            el.classList.add('search__setting--set');
+        } else {
+            el.classList.remove('search__setting--set');
+        }
+    });
 };
 
 // Init default query settings
@@ -115,53 +114,53 @@ const searchInput = document.querySelector('.search__input');
 const searchButton = document.querySelector('.search__submit');
 
 searchButton.onclick = () => {
-	// Empty query won't work
-	if(!searchInput.value) return UIkit.modal(document.querySelector('#emptySearch')).show();
-	// Time search
-	const startTime = Date.now();
-	// Query settings
-	const query = { name: searchInput.value, number: Query_Number, price: Query_Price, conditions: Query_Conditions };
-	// Let user know that I'm searching
-	document.querySelector('.search__submit').classList.add('search__submit--loading');
-	document.querySelector('.search__submit').removeAttribute('data-uk-tooltip');
-	// Reset and hide previous search elements
-	resetSorting();
-	document.querySelectorAll('.output__tabs, .output__tables').forEach(el => el.style.display = 'none');
-	document.querySelector('.output__data').innerHTML = '';
-	document.querySelector('.output2__header').innerHTML = '<tr><th>Permissions \\ Apps</th></tr>';
-	document.querySelector('.output2__data').innerHTML = '';
-	// Send query
-	search(query, res => {
-		document.querySelector('.search__submit').classList.remove('search__submit--loading');
-		window.scroll({ behavior: 'smooth', top: document.querySelector('.output').offsetTop });
-		if(typeof res === 'undefined'){
-			UIkit.notification('Oops! Something went wrong.', { status: 'danger' });
-		}
-		if(res.length === 0){
-			UIkit.notification('No result');
-		}
-		// Calculate elapsed time
-		const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
-		/*
-		Show results
-		 */
-		// Message
-		document.querySelector('.search__submit').setAttribute('data-uk-tooltip', `title: Results : ${res.length} items (${(res.length / query.number * 100).toFixed(2)}% of ${query.number} apps), elapsed time : ${elapsedTime}s`);
-		const displayedPermissions = [];
-		res.forEach(app => {
-			// Show all permissions
-			if(Array.isArray(app.permissions)){
-				app.permissions.forEach(permission => {
-					const p = permission.permission;
-					if(displayedPermissions.indexOf(p) === -1){
-						displayedPermissions.push(p);
-						document.querySelector('.output2__data').innerHTML += `<tr class="output2__permission"><th class="output2__permission__name">${p}</th></tr>`;
-					}
-				});
-			}
-			document.querySelector('.output2__header tr').innerHTML += `<th class="output2__app">${app.title}</th>`;
-			// Show apps details
-			document.querySelector('.output__data').innerHTML += `<tr class="output__item" data-link="${app.url}"><td class="output__data__name" data-uk-tooltip="title: ${app.developer}; delay: 500; pos: right"><img class="output__icon" src="${app.icon}" alt="${app.title}">${app.title} <span class="output__data__index">${app.index}</span></td><td class="output__data__description">${app.summary}</td><td class="output__data__category">${app.genreId[0]}${app.genreId.slice(1).replace(/_/g, ' ').toLowerCase()}</td><td class="output__data__installs">${app.minInstalls ? app.minInstalls.toLocaleString('en-US') : 'N/A'}</td><td class="output__data__score" data-uk-tooltip="title: ${app.ratings} ratings; delay: 500; pos: right">${app.score ? app.score.toFixed(1) : 'N/A'}</td><td class="output__data__size">${app.size ? (app.size.endsWith('k') ? `0.${app.size.slice(0, -1)}M` : app.size) : 'N/A'}</td><td class="output__data__version">${app.version}</td><td class="output__data__last-update" data-date=${app.updated}">${app.updated ? new Date(app.updated).toDateString() : 'N/A'}</td><td class="output__data__price">${app.priceText}</td><td class="output__data__ads">${app.adSupported}</td><td class="output__data__IAP">${app.offersIAP}</td><td class="output__data__android-version">${app.androidVersion}</td><td class="output__data__permissions">${Array.isArray(app.permissions) ? app.permissions.length : 'N/A'}</td></tr>`;
+        // Empty query won't work
+        if (!searchInput.value) return UIkit.modal(document.querySelector('#emptySearch')).show();
+        // Time search
+        const startTime = Date.now();
+        // Query settings
+        const query = { name: searchInput.value, number: Query_Number, price: Query_Price, conditions: Query_Conditions };
+        // Let user know that I'm searching
+        document.querySelector('.search__submit').classList.add('search__submit--loading');
+        document.querySelector('.search__submit').removeAttribute('data-uk-tooltip');
+        // Reset and hide previous search elements
+        resetSorting();
+        document.querySelectorAll('.output__tabs, .output__tables').forEach(el => el.style.display = 'none');
+        document.querySelector('.output__data').innerHTML = '';
+        document.querySelector('.output2__header').innerHTML = '<tr><th>Permissions \\ Apps</th></tr>';
+        document.querySelector('.output2__data').innerHTML = '';
+        // Send query
+        search(query, res => {
+                    document.querySelector('.search__submit').classList.remove('search__submit--loading');
+                    window.scroll({ behavior: 'smooth', top: document.querySelector('.output').offsetTop });
+                    if (typeof res === 'undefined') {
+                        UIkit.notification('Oops! Something went wrong.', { status: 'danger' });
+                    }
+                    if (res.length === 0) {
+                        UIkit.notification('No result');
+                    }
+                    // Calculate elapsed time
+                    const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+                    /*
+                    Show results
+                     */
+                    // Message
+                    document.querySelector('.search__submit').setAttribute('data-uk-tooltip', `title: Results : ${res.length} items (${(res.length / query.number * 100).toFixed(2)}% of ${query.number} apps), elapsed time : ${elapsedTime}s`);
+                    const displayedPermissions = [];
+                    res.forEach(app => {
+                                // Show all permissions
+                                if (Array.isArray(app.permissions)) {
+                                    app.permissions.forEach(permission => {
+                                        const p = permission.permission;
+                                        if (displayedPermissions.indexOf(p) === -1) {
+                                            displayedPermissions.push(p);
+                                            document.querySelector('.output2__data').innerHTML += `<tr class="output2__permission"><th class="output2__permission__name">${p}</th></tr>`;
+                                        }
+                                    });
+                                }
+                                document.querySelector('.output2__header tr').innerHTML += `<th class="output2__app">${app.title}</th>`;
+                                // Show apps details
+                                document.querySelector('.output__data').innerHTML += `<tr class="output__item" data-link="${app.url}"><td class="output__data__name" data-uk-tooltip="title: ${app.developer}; delay: 500; pos: right"><img class="output__icon" src="${app.icon}" alt="${app.title}">${app.title} <span class="output__data__index">${app.index}</span></td><td class="output__data__description">${app.summary}</td><td class="output__data__category">${app.genreId[0]}${app.genreId.slice(1).replace(/_/g, ' ').toLowerCase()}</td><td class="output__data__installs">${app.minInstalls ? app.minInstalls.toLocaleString('en-US') : 'N/A'}</td><td class="output__data__score" data-uk-tooltip="title: ${app.ratings} ratings; delay: 500; pos: right">${app.score ? app.score.toFixed(1) : 'N/A'}</td><td class="output__data__size">${app.size ? (app.size.endsWith('k') ? `0.${app.size.slice(0, -1)}M` : app.size) : 'N/A'}</td><td class="output__data__version">${app.version}</td><td class="output__data__last-update" data-date=${app.updated}">${app.updated ? new Date(app.updated).toDateString() : 'N/A'}</td><td class="output__data__price">${app.priceText}</td><td class="output__data__ads">${app.adSupported}</td><td class="output__data__IAP">${app.offersIAP}</td><td class="output__data__android-version">${app.androidVersion}</td><td class="output__data__permissions">${Array.isArray(app.permissions) ? app.permissions.length : 'N/A'}</td></tr>`;
 		});
 		res.forEach(app => {
 			// Show permissions per app
